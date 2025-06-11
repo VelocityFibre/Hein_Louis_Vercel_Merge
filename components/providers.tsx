@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { Toaster as ShadcnToaster } from "@/components/ui/toaster"
+import { AuthProvider } from "@/contexts/auth-context"
 
 /**
  * All client-side providers wrapped in one component
@@ -18,11 +19,13 @@ export function Providers({ children }: { children: ReactNode }) {
       disableTransitionOnChange={false}
       storageKey="velocity-fibre-theme"
     >
-      <SidebarProvider>
-        {children}
-        <SonnerToaster />
-        <ShadcnToaster />
-      </SidebarProvider>
+      <AuthProvider>
+        <SidebarProvider>
+          {children}
+          <SonnerToaster />
+          <ShadcnToaster />
+        </SidebarProvider>
+      </AuthProvider>
     </ThemeProvider>
   )
 }
