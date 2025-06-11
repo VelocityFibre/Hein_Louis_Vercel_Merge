@@ -1,7 +1,25 @@
 "use client"
 
+import Link from "next/link"
 import Image from "next/image"
-import { BarChart3, Building2, Home, Package, Users, Palette, Building, TrendingUp } from "lucide-react"
+import { usePathname } from "next/navigation"
+import { 
+  BarChart3, 
+  Building2, 
+  Home, 
+  Package, 
+  Users, 
+  ClipboardList,
+  TrendingUp,
+  FileText,
+  UserCheck,
+  AlertCircle,
+  Building,
+  Settings,
+  LogOut,
+  ChevronRight
+} from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
 
 import {
   Sidebar,
@@ -13,58 +31,54 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger, // Imported SidebarTrigger here
+  SidebarFooter,
 } from "@/components/ui/sidebar"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { ModeToggle } from "@/components/mode-toggle"
 
 const menuItems = [
   {
-    title: "Dashboard",
-    icon: Home,
-    id: "dashboard",
+    title: "Main Navigation",
+    items: [
+      { title: "Dashboard", icon: Home, href: "/" },
+      { title: "Projects", icon: Building2, href: "/projects" },
+      { title: "Customers", icon: Users, href: "/customers" },
+      { title: "Tasks", icon: ClipboardList, href: "/tasks" },
+      { title: "Issues", icon: AlertCircle, href: "/issues" },
+      { title: "Contractors", icon: UserCheck, href: "/contractors" },
+    ]
   },
   {
-    title: "Material", // Changed from "Stock Items"
-    icon: Package,
-    id: "stock",
+    title: "Stock Management",
+    items: [
+      { title: "Material", icon: Package, href: "/stock" },
+      { title: "Stock Movements", icon: TrendingUp, href: "/movements" },
+      { title: "Bill of Quantities", icon: FileText, href: "/boq" },
+    ]
   },
   {
-    title: "Suppliers",
-    icon: Users,
-    id: "suppliers",
+    title: "Suppliers & Portals",
+    items: [
+      { title: "Suppliers & RFQ", icon: Building, href: "/suppliers" },
+      { title: "Supplier Portal", icon: Building, href: "/supplier-portal" },
+      { title: "Customer Portal", icon: Users, href: "/customer-portal" },
+    ]
   },
   {
-    title: "Projects",
-    icon: Building2,
-    id: "projects",
-  },
-  {
-    title: "Stock Movements",
-    icon: TrendingUp, // Re-added TrendingUp as it's used in Stock Movements card
-    id: "movements",
-  },
-  {
-    title: "Analytics",
-    icon: BarChart3,
-    id: "analytics",
-  },
-  {
-    title: "Supplier Portal",
-    icon: Building,
-    id: "supplier-portal",
-  },
-  {
-    title: "Theme Settings",
-    icon: Palette,
-    id: "theme",
-  },
+    title: "Analytics & Settings",
+    items: [
+      { title: "Analytics", icon: BarChart3, href: "/analytics" },
+      { title: "Audit Trail", icon: FileText, href: "/audit" },
+      { title: "Settings", icon: Settings, href: "/settings" },
+    ]
+  }
 ]
 
-interface AppSidebarProps {
-  activeModule: string
-  setActiveModule: (module: string) => void
-}
+export function AppSidebar() {
+  const pathname = usePathname()
+  const { currentUser, logout } = useAuth()
 
-export function AppSidebar({ activeModule, setActiveModule }: AppSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader className="p-4 velocity-gradient-dark">
@@ -80,26 +94,54 @@ export function AppSidebar({ activeModule, setActiveModule }: AppSidebarProps) {
           </div>
           <p className="text-sm text-white/80">Stock Management System</p>
         </div>
-        {/* Moved SidebarTrigger here, inside the Sidebar component */}
-        <SidebarTrigger className="-ml-1 text-white" />
+        <div className="mt-4 flex justify-end">
+          <ModeToggle />
+        </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton onClick={() => setActiveModule(item.id)} isActive={activeModule === item.id}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {menuItems.map((group) => (
+          <SidebarGroup key={group.title}>
+            <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton asChild isActive={pathname === item.href}>
+                      <Link href={item.href}>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
+      <SidebarFooter className="p-4 border-t">
+        {currentUser && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Avatar>
+                <AvatarFallback>{currentUser.initials}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">{currentUser.name}</span>
+                <span className="text-xs text-muted-foreground">{currentUser.role}</span>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={logout}
+              title="Logout"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </SidebarFooter>
     </Sidebar>
   )
 }
