@@ -45,6 +45,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (storedUser) {
         const parsedUser = JSON.parse(storedUser)
         setCurrentUser(parsedUser)
+      } else {
+        // Auto-login with default user for now
+        const defaultUser = predefinedUsers[1] // Jane Smith - Administrator
+        setCurrentUser(defaultUser)
+        localStorage.setItem("velocityFibreUser", JSON.stringify(defaultUser))
       }
     } catch (error) {
       console.error("Error loading user from localStorage:", error)
@@ -75,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error("Error removing user from localStorage:", error)
       }
     }
-    router.push("/login")
+    router.push("/")
   }
 
   // Don't render anything until we're mounted on the client
