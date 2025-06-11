@@ -1,7 +1,24 @@
 "use client"
 
 import Image from "next/image"
-import { BarChart3, Building2, Home, Package, Users, Palette, Building, TrendingUp } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { 
+  BarChart3, 
+  Building2, 
+  Home, 
+  Package, 
+  Users, 
+  Palette, 
+  Building, 
+  TrendingUp,
+  ClipboardList,
+  AlertCircle,
+  HardHat,
+  Shield,
+  UserCircle,
+  Settings
+} from "lucide-react"
 
 import {
   Sidebar,
@@ -13,58 +30,90 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger, // Imported SidebarTrigger here
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
 
 const menuItems = [
   {
     title: "Dashboard",
     icon: Home,
-    id: "dashboard",
-  },
-  {
-    title: "Material", // Changed from "Stock Items"
-    icon: Package,
-    id: "stock",
-  },
-  {
-    title: "Suppliers",
-    icon: Users,
-    id: "suppliers",
+    href: "/",
   },
   {
     title: "Projects",
     icon: Building2,
-    id: "projects",
+    href: "/projects",
+  },
+  {
+    title: "Customers",
+    icon: Users,
+    href: "/customers",
+  },
+  {
+    title: "Tasks",
+    icon: ClipboardList,
+    href: "/tasks",
+  },
+  {
+    title: "Issues",
+    icon: AlertCircle,
+    href: "/issues",
+  },
+  {
+    title: "Contractors",
+    icon: HardHat,
+    href: "/contractors",
+  },
+  {
+    title: "Material",
+    icon: Package,
+    href: "/stock",
+  },
+  {
+    title: "Suppliers",
+    icon: Building,
+    href: "/suppliers",
   },
   {
     title: "Stock Movements",
-    icon: TrendingUp, // Re-added TrendingUp as it's used in Stock Movements card
-    id: "movements",
+    icon: TrendingUp,
+    href: "/movements",
   },
   {
     title: "Analytics",
     icon: BarChart3,
-    id: "analytics",
+    href: "/analytics",
+  },
+  {
+    title: "Audit",
+    icon: Shield,
+    href: "/audit",
+  },
+  {
+    title: "Customer Portal",
+    icon: UserCircle,
+    href: "/customer-portal",
   },
   {
     title: "Supplier Portal",
     icon: Building,
-    id: "supplier-portal",
+    href: "/supplier-portal",
+  },
+  {
+    title: "Settings",
+    icon: Settings,
+    href: "/settings",
   },
   {
     title: "Theme Settings",
     icon: Palette,
-    id: "theme",
+    href: "/theme",
   },
 ]
 
-interface AppSidebarProps {
-  activeModule: string
-  setActiveModule: (module: string) => void
-}
-
-export function AppSidebar({ activeModule, setActiveModule }: AppSidebarProps) {
+export function AppSidebar() {
+  const pathname = usePathname()
+  
   return (
     <Sidebar>
       <SidebarHeader className="p-4 velocity-gradient-dark">
@@ -80,7 +129,6 @@ export function AppSidebar({ activeModule, setActiveModule }: AppSidebarProps) {
           </div>
           <p className="text-sm text-white/80">Stock Management System</p>
         </div>
-        {/* Moved SidebarTrigger here, inside the Sidebar component */}
         <SidebarTrigger className="-ml-1 text-white" />
       </SidebarHeader>
       <SidebarContent>
@@ -89,10 +137,12 @@ export function AppSidebar({ activeModule, setActiveModule }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton onClick={() => setActiveModule(item.id)} isActive={activeModule === item.id}>
-                    <item.icon />
-                    <span>{item.title}</span>
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton asChild isActive={pathname === item.href}>
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
