@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,11 +21,11 @@ import { mockSuppliers, mockStockItems, mockRFQs } from "@/lib/mock-data"
 import type { Supplier } from "@/lib/types"
 
 interface SuppliersProps {
-  setActiveModule: (module: string) => void // Added setActiveModule prop
+  setActiveModule?: (module: string) => void // Made setActiveModule optional
 }
 
 export function Suppliers({ setActiveModule }: SuppliersProps) {
-  // Destructure setActiveModule
+  const router = useRouter()
   const [suppliers, setSuppliers] = useState<Supplier[]>(mockSuppliers)
   const [searchTerm, setSearchTerm] = useState("")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -224,7 +225,13 @@ export function Suppliers({ setActiveModule }: SuppliersProps) {
           </CardHeader>
           <CardContent>
             <CardDescription className="mb-4">Manage your Bill of Quantities, import, and track items.</CardDescription>
-            <Button onClick={() => setActiveModule("boq")}>Go to BOQ Management</Button>
+            <Button onClick={() => {
+              if (setActiveModule) {
+                setActiveModule("boq")
+              } else {
+                router.push("/boq")
+              }
+            }}>Go to BOQ Management</Button>
           </CardContent>
         </Card>
         <Card className="hover:shadow-md transition-shadow">
@@ -234,7 +241,13 @@ export function Suppliers({ setActiveModule }: SuppliersProps) {
           </CardHeader>
           <CardContent>
             <CardDescription className="mb-4">Create and manage Request for Quotations for suppliers.</CardDescription>
-            <Button onClick={() => setActiveModule("rfq")}>Go to RFQ Management</Button>
+            <Button onClick={() => {
+              if (setActiveModule) {
+                setActiveModule("rfq")
+              } else {
+                router.push("/rfq")
+              }
+            }}>Go to RFQ Management</Button>
           </CardContent>
         </Card>
       </div>

@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,11 +25,11 @@ import { mockStockItems, mockSuppliers } from "@/lib/mock-data"
 import type { StockItem } from "@/lib/types"
 
 interface StockItemsProps {
-  setActiveModule: (module: string) => void // Added setActiveModule prop
+  setActiveModule?: (module: string) => void // Made setActiveModule optional
 }
 
 export function StockItems({ setActiveModule }: StockItemsProps) {
-  // Destructure setActiveModule
+  const router = useRouter()
   const [stockItems, setStockItems] = useState<StockItem[]>(mockStockItems)
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState<string>("all")
@@ -485,7 +486,13 @@ export function StockItems({ setActiveModule }: StockItemsProps) {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground mb-3">Track all incoming and outgoing stock transactions.</p>
-          <Button onClick={() => setActiveModule("movements")}>Go to Stock Movements</Button>
+          <Button onClick={() => {
+            if (setActiveModule) {
+              setActiveModule("movements")
+            } else {
+              router.push("/movements")
+            }
+          }}>Go to Stock Movements</Button>
         </CardContent>
       </Card>
 
